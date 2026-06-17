@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vigía — Te avisamos si tu web se cae</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream: #FAF6EE;
+    --cream-2: #F1EADA;
+    --ink: #1C1B17;
+    --green: #1F4D3D;
+    --green-light: #2E6B55;
+    --coral: #FF6B5B;
+    --mustard: #E8A33D;
+    --line: rgba(28,27,23,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+  h1,h2,h3{font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em;}
+  a{color:inherit;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(250,246,238,0.85);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{display:flex; align-items:center; justify-content:space-between; height:72px;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:'Fraunces',serif; font-weight:700; font-size:1.3rem;}
+  .brand .dot{width:12px; height:12px; border-radius:50%; background:var(--green); position:relative; flex-shrink:0;}
+  .brand .dot::after{
+    content:''; position:absolute; inset:-4px; border-radius:50%;
+    border:1.5px solid var(--green); opacity:0;
+    animation:ping 2.4s ease-out infinite;
+  }
+  @keyframes ping{
+    0%{opacity:0.55; transform:scale(0.6);}
+    70%{opacity:0;}
+    100%{opacity:0; transform:scale(1.8);}
+  }
+  nav .cta-small{
+    background:var(--green); color:var(--cream); padding:10px 20px;
+    border-radius:100px; font-weight:600; font-size:0.92rem;
+    text-decoration:none; transition:transform .15s ease, background .2s ease;
+  }
+  nav .cta-small:hover{background:var(--green-light); transform:translateY(-1px);}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:96px 0 72px; position:relative;}
+  .hero .eyebrow{
+    font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.08em;
+    color:var(--green); text-transform:uppercase; display:flex; align-items:center; gap:8px;
+    margin-bottom:22px;
+  }
+  .hero h1{
+    font-size:clamp(2.4rem, 6vw, 4.4rem); line-height:1.04; max-width:780px;
+    margin-bottom:24px;
+  }
+  .hero h1 em{font-style:italic; color:var(--coral);}
+  .hero p.lead{
+    font-size:1.2rem; color:rgba(28,27,23,0.72); max-width:520px; margin-bottom:36px;
+  }
+  .hero-cta-row{display:flex; align-items:center; gap:20px; flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--coral); color:#fff; padding:16px 30px; border-radius:100px;
+    font-weight:700; font-size:1.02rem; text-decoration:none; border:none; cursor:pointer;
+    box-shadow:0 8px 24px -8px rgba(255,107,91,0.55);
+    transition:transform .15s ease, box-shadow .2s ease;
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 12px 28px -8px rgba(255,107,91,0.65);}
+  .price-tag{font-family:'JetBrains Mono',monospace; font-size:0.95rem; color:rgba(28,27,23,0.6);}
+  .price-tag b{color:var(--ink); font-size:1.1rem;}
+
+  /* ---------- HERO VISUAL: el latido ---------- */
+  .heart-card{
+    position:absolute; right:24px; top:90px; width:320px;
+    background:#fff; border-radius:20px; padding:24px;
+    border:1px solid var(--line);
+    box-shadow:0 30px 60px -20px rgba(28,27,23,0.18);
+  }
+  .heart-card .url{
+    font-family:'JetBrains Mono',monospace; font-size:0.82rem; color:rgba(28,27,23,0.55);
+    margin-bottom:14px; display:flex; align-items:center; gap:8px;
+  }
+  .heart-card .url .pulse-dot{
+    width:8px; height:8px; border-radius:50%; background:var(--green); flex-shrink:0;
+    animation:heartbeat 1.8s ease-in-out infinite;
+  }
+  @keyframes heartbeat{
+    0%,100%{transform:scale(1); box-shadow:0 0 0 0 rgba(31,77,61,0.4);}
+    50%{transform:scale(1.25); box-shadow:0 0 0 6px rgba(31,77,61,0);}
+  }
+  .heart-card .status-line{display:flex; align-items:baseline; gap:8px; margin-bottom:6px;}
+  .heart-card .status-line .big{font-family:'Fraunces',serif; font-size:1.8rem; font-weight:600; color:var(--green);}
+  .heart-card .status-line .unit{font-size:0.85rem; color:rgba(28,27,23,0.5);}
+  .heart-card .sub{font-size:0.85rem; color:rgba(28,27,23,0.55);}
+  .heart-card .wave{margin-top:16px; height:40px;}
+
+  @media(max-width:900px){.heart-card{display:none;}}
+
+  /* ---------- PROBLEMA ---------- */
+  .problem{padding:64px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--cream-2);}
+  .problem .wrap{display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;}
+  .problem h2{font-size:1.9rem; margin-bottom:18px; max-width:420px;}
+  .problem p{color:rgba(28,27,23,0.72); font-size:1.05rem; max-width:440px;}
+  .scenario{
+    background:#fff; border-radius:18px; padding:28px; border:1px solid var(--line);
+  }
+  .scenario .time{font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--coral); margin-bottom:10px; font-weight:600;}
+  .scenario p{font-size:1rem; color:var(--ink); margin-bottom:0;}
+  @media(max-width:760px){.problem .wrap{grid-template-columns:1fr;}}
+
+  /* ---------- CÓMO FUNCIONA ---------- */
+  .how{padding:96px 0;}
+  .how .head{max-width:560px; margin-bottom:56px;}
+  .how h2{font-size:2.1rem; margin-bottom:14px;}
+  .how .head p{color:rgba(28,27,23,0.68); font-size:1.08rem;}
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:28px;}
+  .step{
+    background:#fff; border-radius:18px; padding:32px; border:1px solid var(--line);
+    position:relative; transition:transform .2s ease;
+  }
+  .step:hover{transform:translateY(-4px);}
+  .step .num{
+    font-family:'Fraunces',serif; font-size:0.9rem; color:var(--mustard); font-weight:700;
+    margin-bottom:18px; letter-spacing:0.02em;
+  }
+  .step h3{font-size:1.25rem; margin-bottom:10px;}
+  .step p{color:rgba(28,27,23,0.68); font-size:0.96rem;}
+  .step .icon{width:44px; height:44px; margin-bottom:18px;}
+  @media(max-width:820px){.steps{grid-template-columns:1fr;}}
+
+  /* ---------- EMAIL MOCKUP ---------- */
+  .alert-demo{padding:80px 0; background:var(--green); color:var(--cream); overflow:hidden; position:relative;}
+  .alert-demo .wrap{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;}
+  .alert-demo h2{color:var(--cream); font-size:2rem; margin-bottom:16px;}
+  .alert-demo p{color:rgba(250,246,238,0.78); font-size:1.05rem; max-width:420px;}
+  .email-mock{
+    background:#fff; border-radius:16px; overflow:hidden; color:var(--ink);
+    box-shadow:0 40px 80px -20px rgba(0,0,0,0.4);
+    transform:rotate(-2deg);
+  }
+  .email-mock .bar{background:#F1EADA; padding:12px 18px; font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:rgba(28,27,23,0.55); display:flex; gap:8px;}
+  .email-mock .bar span{width:9px; height:9px; border-radius:50%; background:var(--coral); display:inline-block;}
+  .email-mock .body{padding:26px;}
+  .email-mock .subject{font-weight:700; font-size:1.05rem; margin-bottom:4px;}
+  .email-mock .from{font-size:0.82rem; color:rgba(28,27,23,0.5); margin-bottom:18px;}
+  .email-mock .alert-box{
+    background:#FFF1EF; border-left:4px solid var(--coral); border-radius:8px; padding:16px;
+    font-size:0.92rem; line-height:1.5;
+  }
+  @media(max-width:820px){.alert-demo .wrap{grid-template-columns:1fr;} .email-mock{transform:none;}}
+
+  /* ---------- PRICING + FORM ---------- */
+  .signup{padding:100px 0;}
+  .signup .head{text-align:center; max-width:600px; margin:0 auto 48px;}
+  .signup h2{font-size:2.2rem; margin-bottom:14px;}
+  .signup .head p{color:rgba(28,27,23,0.68); font-size:1.08rem;}
+
+  .signup-card{
+    max-width:520px; margin:0 auto;
+    background:#fff; border-radius:24px; padding:40px;
+    border:1px solid var(--line);
+    box-shadow:0 30px 70px -25px rgba(28,27,23,0.18);
+  }
+  .price-row{
+    display:flex; align-items:baseline; justify-content:center; gap:6px; margin-bottom:6px;
+  }
+  .price-row .amount{font-family:'Fraunces',serif; font-size:3.2rem; font-weight:700; color:var(--green);}
+  .price-row .per{font-size:1rem; color:rgba(28,27,23,0.55);}
+  .price-sub{text-align:center; font-size:0.9rem; color:rgba(28,27,23,0.55); margin-bottom:32px;}
+
+  .field{margin-bottom:18px;}
+  .field label{
+    display:block; font-size:0.85rem; font-weight:600; margin-bottom:7px; color:var(--ink);
+  }
+  .field input{
+    width:100%; padding:13px 16px; border-radius:12px; border:1.5px solid var(--line);
+    font-family:'Inter',sans-serif; font-size:0.98rem; background:var(--cream); color:var(--ink);
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .field input:focus{outline:none; border-color:var(--green); background:#fff;}
+  .field input::placeholder{color:rgba(28,27,23,0.35);}
+
+  .channel-select{display:flex; gap:10px;}
+  .channel-opt{
+    flex:1; border:1.5px solid var(--line); border-radius:12px; padding:12px 10px;
+    text-align:center; cursor:pointer; font-size:0.88rem; font-weight:600;
+    background:var(--cream); transition:all .15s ease; user-select:none;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+  }
+  .channel-opt.active{border-color:var(--green); background:#fff; color:var(--green); box-shadow:0 0 0 3px rgba(31,77,61,0.08);}
+  .channel-opt.disabled{opacity:0.45; cursor:not-allowed;}
+  .channel-opt .tag{font-size:0.68rem; font-family:'JetBrains Mono',monospace; color:var(--mustard); font-weight:600;}
+
+  .submit-btn{
+    width:100%; background:var(--coral); color:#fff; padding:16px; border-radius:14px;
+    border:none; font-weight:700; font-size:1.04rem; cursor:pointer; margin-top:8px;
+    transition:transform .15s ease, background .2s ease;
+  }
+  .submit-btn:hover{background:#ff5240; transform:translateY(-1px);}
+  .submit-btn:active{transform:translateY(0);}
+
+  .trust-row{
+    display:flex; align-items:center; justify-content:center; gap:8px; margin-top:18px;
+    font-size:0.82rem; color:rgba(28,27,23,0.5);
+  }
+
+  .success-state{display:none; text-align:center;}
+  .success-state .big-dot{
+    width:64px; height:64px; border-radius:50%; background:var(--green); margin:0 auto 20px;
+    display:flex; align-items:center; justify-content:center;
+    animation:pop .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes pop{0%{transform:scale(0);} 100%{transform:scale(1);}}
+  .success-state h3{font-size:1.4rem; margin-bottom:10px;}
+  .success-state p{color:rgba(28,27,23,0.65); font-size:0.98rem;}
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:40px 0; border-top:1px solid var(--line);}
+  footer .wrap{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;}
+  footer .brand{font-size:1.05rem;}
+  footer .fine{font-size:0.82rem; color:rgba(28,27,23,0.5);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span>Vigía</div>
+    <a href="#signup" class="cta-small">Empezar — 3,90 €/mes</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span>●</span> Comprobamos tu web cada 3 minutos</div>
+    <h1>Si tu web se cae,<br><em>tú te enteras</em><br>antes que tus clientes.</h1>
+    <p class="lead">Vigía vela por tu página mientras tú atiendes tu negocio. En cuanto deja de responder, te escribimos. Sin paneles raros, sin configurar nada.</p>
+    <div class="hero-cta-row">
+      <a href="#signup" class="btn-primary">Vigilar mi web</a>
+      <span class="price-tag">desde <b>3,90 €</b>/mes · cancelas cuando quieras</span>
+    </div>
+  </div>
+
+  <div class="heart-card">
+    <div class="url"><span class="pulse-dot"></span>panaderia-elhorno.es</div>
+    <div class="status-line"><span class="big">Online</span></div>
+    <div class="sub">Última comprobación: hace 41 segundos</div>
+    <svg class="wave" viewBox="0 0 280 40" fill="none">
+      <path d="M0 20 L40 20 L48 6 L56 34 L64 20 L100 20 L108 10 L116 30 L124 20 L280 20" stroke="#1F4D3D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    </svg>
+  </div>
+</section>
+
+<section class="problem">
+  <div class="wrap">
+    <div>
+      <h2>Tu web se cae un martes a las 4 de la tarde. ¿Cuándo te enteras?</h2>
+      <p>Sin alguien vigilando, normalmente la respuesta es: cuando un cliente te llama enfadado, o cuando ya es demasiado tarde. Cada hora caída es una venta que no pasa y un cliente que se va a otro lado.</p>
+    </div>
+    <div class="scenario">
+      <div class="time">SIN VIGÍA · 16:04</div>
+      <p>"Oye, llevo media hora intentando entrar a tu web para reservar y no carga nada"</p>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="wrap">
+    <div class="head">
+      <h2>Tres minutos para tener tranquilidad</h2>
+      <p>No hace falta instalar nada ni tocar tu web. Solo necesitamos saber qué dirección vigilar.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <svg class="icon" viewBox="0 0 44 44" fill="none"><rect x="4" y="4" width="36" height="36" rx="10" fill="#FAF6EE"/><path d="M14 22h16M22 14v16" stroke="#1F4D3D" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <div class="num">PASO UNO</div>
+        <h3>Nos das tu web</h3>
+        <p>Pegas la dirección de tu página y tu correo. Nada más que rellenar.</p>
+      </div>
+      <div class="step">
+        <svg class="icon" viewBox="0 0 44 44" fill="none"><rect x="4" y="4" width="36" height="36" rx="10" fill="#FAF6EE"/><circle cx="22" cy="22" r="9" stroke="#1F4D3D" stroke-width="2.5"/><circle cx="22" cy="22" r="2.5" fill="#1F4D3D"/></svg>
+        <div class="num">PASO DOS</div>
+        <h3>Empezamos a vigilar</h3>
+        <p>Comprobamos que tu web responde cada pocos minutos, día y noche, sin descanso.</p>
+      </div>
+      <div class="step">
+        <svg class="icon" viewBox="0 0 44 44" fill="none"><rect x="4" y="4" width="36" height="36" rx="10" fill="#FAF6EE"/><path d="M14 18l8-8 8 8M22 10v18" stroke="#FF6B5B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="num">PASO TRES</div>
+        <h3>Te avisamos al momento</h3>
+        <p>Si tu web no responde, te lo decimos por correo en cuanto lo detectamos. Así puedes actuar antes de perder clientes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alert-demo">
+  <div class="wrap">
+    <div>
+      <h2>Así es el aviso que recibirías</h2>
+      <p>Directo, claro y sin tecnicismos. Sabes exactamente qué pasa y desde cuándo.</p>
+    </div>
+    <div class="email-mock">
+      <div class="bar"><span></span><span></span><span></span>&nbsp;&nbsp;Bandeja de entrada</div>
+      <div class="body">
+        <div class="subject">⚠️ panaderia-elhorno.es no responde</div>
+        <div class="from">de Vigía · hace 2 minutos</div>
+        <div class="alert-box">
+          Hola, hemos detectado que <b>panaderia-elhorno.es</b> dejó de responder a las 16:02.<br><br>
+          Llevamos 3 comprobaciones seguidas sin respuesta. Te avisamos para que puedas revisarlo cuanto antes.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="signup" id="signup">
+  <div class="wrap">
+    <div class="head">
+      <h2>Empieza a vigilar tu web hoy</h2>
+      <p>Date de alta en menos de un minuto. Sin permanencia, sin letra pequeña.</p>
+    </div>
+
+    <div class="signup-card">
+      <div class="price-row"><span class="amount">3,90 €</span><span class="per">/ mes</span></div>
+      <p class="price-sub">Una web vigilada · comprobación cada 3 minutos</p>
+
+      <form id="signupForm">
+        <div class="field">
+          <label for="webUrl">Dirección de tu web</label>
+          <input type="url" id="webUrl" placeholder="https://tunegocio.es" required>
+        </div>
+        <div class="field">
+          <label for="email">Tu correo</label>
+          <input type="email" id="email" placeholder="tu@correo.com" required>
+        </div>
+        <div class="field">
+          <label>¿Cómo quieres que te avisemos?</label>
+          <div class="channel-select">
+            <div class="channel-opt active" data-channel="email">📧 Email</div>
+            <div class="channel-opt disabled" data-channel="telegram">💬 Telegram <span class="tag">PRONTO</span></div>
+            <div class="channel-opt disabled" data-channel="sms">📱 SMS <span class="tag">PRONTO</span></div>
+          </div>
+        </div>
+        <button type="submit" class="submit-btn">Empezar a vigilar — 3,90 €/mes</button>
+        <div class="trust-row">🔒 Pago seguro con Stripe · cancela cuando quieras</div>
+      </form>
+
+      <div class="success-state" id="successState">
+        <div class="big-dot">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#FAF6EE" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>¡Ya estamos vigilando tu web!</h3>
+        <p>Te escribiremos a tu correo en cuanto detectemos cualquier problema. No tienes que hacer nada más.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><span class="dot" style="animation:none;"></span>Vigía</div>
+    <div class="fine">Hecho para que tu negocio nunca esté a oscuras.</div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.channel-opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      if(opt.classList.contains('disabled')) return;
+      document.querySelectorAll('.channel-opt').forEach(o=>o.classList.remove('active'));
+      opt.classList.add('active');
+    });
+  });
+
+  document.getElementById('signupForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    // Aquí en producción: llamada a Stripe Checkout + creación del monitor en backend
+    document.getElementById('signupForm').style.display='none';
+    document.getElementById('successState').style.display='block';
+  });
+</script>
+
+</body>
+</html>
