@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hangar — Hosting de bots de Discord sin complicarte</title>
+<meta name="description" content="Sube tu bot, elige una plantilla o pide uno a medida. Hangar lo mantiene online 24/7 por 5€/mes. Pensado para servidores de Discord, sin tecnicismos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0B0E14;
+    --panel: #12161F;
+    --panel-2: #161B26;
+    --line: rgba(255,255,255,0.08);
+    --text: #E8EAF0;
+    --text-dim: rgba(232,234,240,0.6);
+    --online: #3BE89D;
+    --violet: #8B6FFF;
+    --warn: #FFB23B;
+  }
+  *{margin:0; padding:0; box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:'Inter',sans-serif; line-height:1.5;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif; font-weight:600; letter-spacing:-0.01em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 24px;}
+  a{color:inherit;}
+
+  /* ---------- NAV ---------- */
+  nav{position:sticky; top:0; z-index:50; background:rgba(11,14,20,0.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  nav .wrap{display:flex; align-items:center; justify-content:space-between; height:68px;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.2rem;}
+  .brand .pip{width:9px; height:9px; border-radius:50%; background:var(--online); box-shadow:0 0 8px var(--online);}
+  .cta-small{background:var(--violet); color:#fff; padding:9px 18px; border-radius:8px; font-weight:600; font-size:0.88rem; text-decoration:none; transition:transform .15s ease, background .2s ease;}
+  .cta-small:hover{background:#7a5cf0; transform:translateY(-1px);}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:90px 0 60px; position:relative;}
+  .hero-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:56px; align-items:center;}
+  .hero .eyebrow{
+    font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--online);
+    display:flex; align-items:center; gap:8px; margin-bottom:20px; letter-spacing:0.03em;
+  }
+  .hero .eyebrow .pip{width:7px; height:7px; border-radius:50%; background:var(--online); box-shadow:0 0 6px var(--online); animation:blink 2s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1;} 50%{opacity:0.35;}}
+  .hero h1{font-size:clamp(2.2rem, 5vw, 3.6rem); line-height:1.08; margin-bottom:22px;}
+  .hero h1 .accent{color:var(--violet);}
+  .hero p.lead{font-size:1.1rem; color:var(--text-dim); max-width:460px; margin-bottom:32px;}
+  .hero-cta-row{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--online); color:#06241A; padding:14px 26px; border-radius:10px;
+    font-weight:700; font-size:0.98rem; text-decoration:none; border:none; cursor:pointer;
+    transition:transform .15s ease, box-shadow .2s ease; box-shadow:0 0 0 1px rgba(59,232,157,0.3);
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 8px 24px -6px rgba(59,232,157,0.4);}
+  .price-tag{font-family:'JetBrains Mono',monospace; font-size:0.88rem; color:var(--text-dim);}
+  .price-tag b{color:var(--text);}
+  @media(max-width:860px){.hero-grid{grid-template-columns:1fr;}}
+
+  /* ---------- DISCORD MOCK ---------- */
+  .discord-mock{
+    background:var(--panel); border-radius:14px; border:1px solid var(--line);
+    overflow:hidden; box-shadow:0 30px 70px -20px rgba(0,0,0,0.6);
+  }
+  .discord-mock .channel-bar{
+    background:var(--panel-2); padding:13px 18px; font-family:'JetBrains Mono',monospace;
+    font-size:0.82rem; color:var(--text-dim); display:flex; align-items:center; gap:8px;
+    border-bottom:1px solid var(--line);
+  }
+  .discord-mock .messages{padding:18px; display:flex; flex-direction:column; gap:14px; min-height:280px;}
+  .msg{display:flex; gap:11px; opacity:0; animation:fadeIn 0.4s ease forwards;}
+  .msg:nth-child(1){animation-delay:0.2s;}
+  .msg:nth-child(2){animation-delay:1.1s;}
+  .msg:nth-child(3){animation-delay:2.0s;}
+  .msg:nth-child(4){animation-delay:3.1s;}
+  @keyframes fadeIn{to{opacity:1;}}
+  .msg .avatar{width:34px; height:34px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:1rem;}
+  .msg.user .avatar{background:#2B3140;}
+  .msg.bot .avatar{background:var(--violet);}
+  .msg .body{font-size:0.9rem;}
+  .msg .who{font-weight:600; font-size:0.85rem; margin-bottom:2px; display:flex; align-items:center; gap:6px;}
+  .msg.bot .who{color:var(--violet);}
+  .msg .tag-bot{
+    background:var(--violet); color:#fff; font-size:0.62rem; font-family:'JetBrains Mono',monospace;
+    padding:1px 5px; border-radius:4px; font-weight:600;
+  }
+  .msg .content{color:var(--text-dim);}
+  .embed{
+    margin-top:6px; background:var(--panel-2); border-left:3px solid var(--online);
+    border-radius:6px; padding:10px 14px; font-size:0.85rem; max-width:280px;
+  }
+  .embed .embed-title{font-weight:600; color:var(--online); margin-bottom:3px;}
+
+  /* ---------- COMO FUNCIONA ---------- */
+  .how{padding:90px 0; border-top:1px solid var(--line);}
+  .how .head{max-width:600px; margin-bottom:50px;}
+  .how h2{font-size:2rem; margin-bottom:12px;}
+  .how .head p{color:var(--text-dim); font-size:1.05rem;}
+  .paths{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  .path-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:28px;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .path-card:hover{border-color:rgba(139,111,255,0.4); transform:translateY(-3px);}
+  .path-card .tag{
+    font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--violet);
+    text-transform:uppercase; letter-spacing:0.05em; margin-bottom:14px; display:block;
+  }
+  .path-card h3{font-size:1.15rem; margin-bottom:10px;}
+  .path-card p{font-size:0.9rem; color:var(--text-dim);}
+  @media(max-width:860px){.paths{grid-template-columns:1fr;}}
+
+  /* ---------- TEMPLATES ---------- */
+  .templates{padding:90px 0; background:var(--panel); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .templates .head{max-width:560px; margin-bottom:48px;}
+  .templates h2{font-size:2rem; margin-bottom:12px;}
+  .templates .head p{color:var(--text-dim); font-size:1.05rem;}
+  .tmpl-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .tmpl-card{
+    background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:24px;
+  }
+  .tmpl-card .icon{
+    width:38px; height:38px; border-radius:9px; display:flex; align-items:center; justify-content:center;
+    margin-bottom:16px; font-size:1.1rem;
+  }
+  .tmpl-card h3{font-size:1.02rem; margin-bottom:8px;}
+  .tmpl-card p{font-size:0.86rem; color:var(--text-dim); margin-bottom:14px;}
+  .tmpl-card .cmd-list{display:flex; flex-direction:column; gap:5px;}
+  .tmpl-card .cmd{font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--online);}
+  @media(max-width:860px){.tmpl-grid{grid-template-columns:1fr;}}
+
+  /* ---------- PRICING ---------- */
+  .pricing{padding:100px 0;}
+  .pricing .head{text-align:center; max-width:560px; margin:0 auto 48px;}
+  .pricing h2{font-size:2.1rem; margin-bottom:12px;}
+  .pricing .head p{color:var(--text-dim); font-size:1.05rem;}
+
+  .price-card{
+    max-width:460px; margin:0 auto; background:var(--panel); border:1px solid rgba(139,111,255,0.3);
+    border-radius:18px; padding:40px; position:relative; overflow:hidden;
+  }
+  .price-card::before{
+    content:''; position:absolute; top:-60%; right:-30%; width:280px; height:280px; border-radius:50%;
+    background:radial-gradient(circle, rgba(139,111,255,0.25), transparent 70%);
+  }
+  .price-row{display:flex; align-items:baseline; justify-content:center; gap:6px; margin-bottom:6px; position:relative;}
+  .price-row .amount{font-family:'Space Grotesk',sans-serif; font-size:3rem; font-weight:700; color:var(--online);}
+  .price-row .per{font-size:1rem; color:var(--text-dim);}
+  .price-sub{text-align:center; font-size:0.88rem; color:var(--text-dim); margin-bottom:30px; position:relative;}
+  .feature-list{display:flex; flex-direction:column; gap:12px; margin-bottom:30px; position:relative;}
+  .feature-list .feat{display:flex; align-items:center; gap:10px; font-size:0.92rem;}
+  .feature-list .feat svg{flex-shrink:0;}
+
+  .field{margin-bottom:16px; position:relative;}
+  .field label{display:block; font-size:0.82rem; font-weight:600; margin-bottom:7px; color:var(--text-dim);}
+  .field input, .field select, .field textarea{
+    width:100%; padding:12px 14px; border-radius:9px; border:1px solid var(--line);
+    font-family:'Inter',sans-serif; font-size:0.94rem; background:var(--bg); color:var(--text);
+    transition:border-color .15s ease;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{outline:none; border-color:var(--violet);}
+  .field input::placeholder, .field textarea::placeholder{color:rgba(232,234,240,0.3);}
+
+  .submit-btn{
+    width:100%; background:var(--online); color:#06241A; padding:15px; border-radius:10px;
+    border:none; font-weight:700; font-size:1rem; cursor:pointer; margin-top:6px; position:relative;
+    transition:transform .15s ease, box-shadow .2s ease;
+  }
+  .submit-btn:hover{box-shadow:0 8px 24px -6px rgba(59,232,157,0.4); transform:translateY(-1px);}
+  .trust-row{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:16px; font-size:0.8rem; color:var(--text-dim); position:relative;}
+
+  .success-state{display:none; text-align:center; position:relative;}
+  .success-state .big-dot{
+    width:60px; height:60px; border-radius:50%; background:var(--online); margin:0 auto 18px;
+    display:flex; align-items:center; justify-content:center; animation:pop .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes pop{0%{transform:scale(0);} 100%{transform:scale(1);}}
+  .success-state h3{font-size:1.3rem; margin-bottom:8px;}
+  .success-state p{color:var(--text-dim); font-size:0.95rem;}
+
+  footer{padding:36px 0; border-top:1px solid var(--line);}
+  footer .wrap{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;}
+  footer .fine{font-size:0.82rem; color:var(--text-dim);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="pip"></span>Hangar</div>
+    <a href="#signup" class="cta-small">Alojar mi bot</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow"><span class="pip"></span>99.9% uptime · siempre online</div>
+      <h1>Tu bot de Discord,<br>siempre <span class="accent">conectado</span>.<br>Sin tocar un servidor.</h1>
+      <p class="lead">Sube tu bot, elige una plantilla lista para usar, o pídenos uno a medida. Nosotros lo mantenemos corriendo 24/7.</p>
+      <div class="hero-cta-row">
+        <a href="#signup" class="btn-primary">Empezar ahora</a>
+        <span class="price-tag">desde <b>5€</b>/mes · sin permanencia</span>
+      </div>
+    </div>
+
+    <div class="discord-mock">
+      <div class="channel-bar"># moderación-bot</div>
+      <div class="messages">
+        <div class="msg user">
+          <div class="avatar">🧑</div>
+          <div class="body"><div class="who">Capi_Server</div><div class="content mono">!nivel</div></div>
+        </div>
+        <div class="msg bot">
+          <div class="avatar">🤖</div>
+          <div class="body">
+            <div class="who">NivelBot <span class="tag-bot">BOT</span></div>
+            <div class="content">Tu nivel actual es <b>14</b>, te faltan 230 XP para subir.</div>
+          </div>
+        </div>
+        <div class="msg user">
+          <div class="avatar">🧑</div>
+          <div class="body"><div class="who">Capi_Server</div><div class="content mono">!ban @spammer123</div></div>
+        </div>
+        <div class="msg bot">
+          <div class="avatar">🤖</div>
+          <div class="body">
+            <div class="who">NivelBot <span class="tag-bot">BOT</span></div>
+            <div class="embed">
+              <div class="embed-title">🔨 Usuario expulsado</div>
+              spammer123 ha sido banneado del servidor.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="wrap">
+    <div class="head">
+      <h2>Tres formas de tener tu bot, elige la tuya</h2>
+      <p>No todo el mundo programa, y no pasa nada. Aquí encajas igual.</p>
+    </div>
+    <div class="paths">
+      <div class="path-card">
+        <span class="tag">YA PROGRAMAS</span>
+        <h3>Sube tu código</h3>
+        <p>Tienes tu bot ya hecho en Python (discord.py) y solo quieres que esté online sin depender de tu propio PC encendido. Lo subes, lo alojamos.</p>
+      </div>
+      <div class="path-card">
+        <span class="tag">QUIERES ALGO YA</span>
+        <h3>Elige una plantilla</h3>
+        <p>Moderación, niveles, economía del server. Plantillas probadas que personalizas con tus propios comandos, colores y mensajes en minutos.</p>
+      </div>
+      <div class="path-card">
+        <span class="tag">TIENES UNA IDEA</span>
+        <h3>Pide uno a medida</h3>
+        <p>Nos cuentas qué quieres que haga tu bot y te lo preparamos nosotros. Tú solo describes la idea, nosotros nos encargamos del código.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="templates">
+  <div class="wrap">
+    <div class="head">
+      <h2>Plantillas listas para tu server</h2>
+      <p>Elige una al darte de alta y la tienes funcionando el mismo día.</p>
+    </div>
+    <div class="tmpl-grid">
+      <div class="tmpl-card">
+        <div class="icon" style="background:rgba(255,107,91,0.15); color:#FF6B5B;">🛡️</div>
+        <h3>Moderación</h3>
+        <p>Bans, kicks, filtro de palabras y anti-spam automático.</p>
+        <div class="cmd-list">
+          <span class="cmd">!ban</span><span class="cmd">!warn</span><span class="cmd">!clear</span>
+        </div>
+      </div>
+      <div class="tmpl-card">
+        <div class="icon" style="background:rgba(139,111,255,0.15); color:var(--violet);">📈</div>
+        <h3>Niveles</h3>
+        <p>XP por mensaje, rangos automáticos y tabla de clasificación.</p>
+        <div class="cmd-list">
+          <span class="cmd">!nivel</span><span class="cmd">!ranking</span><span class="cmd">!recompensas</span>
+        </div>
+      </div>
+      <div class="tmpl-card">
+        <div class="icon" style="background:rgba(59,232,157,0.15); color:var(--online);">💰</div>
+        <h3>Economía</h3>
+        <p>Moneda propia del server, tienda, trabajos y apuestas entre miembros.</p>
+        <div class="cmd-list">
+          <span class="cmd">!saldo</span><span class="cmd">!trabajar</span><span class="cmd">!tienda</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="signup">
+  <div class="wrap">
+    <div class="head">
+      <h2>Un único plan, sin letra pequeña</h2>
+      <p>Todo incluido. Sin sorpresas en la factura.</p>
+    </div>
+
+    <div class="price-card">
+      <div class="price-row"><span class="amount">5€</span><span class="per">/ mes</span></div>
+      <p class="price-sub">Un bot alojado · online 24/7 · los bots a medida llevan además un coste único de preparación</p>
+
+      <div class="feature-list">
+        <div class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#3BE89D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Tu código o una plantilla, lo que prefieras</div>
+        <div class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#3BE89D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Reinicio automático si algo falla</div>
+        <div class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#3BE89D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Soporte directo si te atascas</div>
+        <div class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#3BE89D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Cancelas cuando quieras</div>
+      </div>
+
+      <form id="signupForm">
+        <div class="field">
+          <label for="discordUser">Tu usuario de Discord</label>
+          <input type="text" id="discordUser" placeholder="tunombre#0000" required>
+        </div>
+        <div class="field">
+          <label for="email">Tu correo</label>
+          <input type="email" id="email" placeholder="tu@correo.com" required>
+        </div>
+        <div class="field">
+          <label for="botType">¿Qué necesitas?</label>
+          <select id="botType" required>
+            <option value="" disabled selected>Elige una opción</option>
+            <option value="upload">Ya tengo mi bot programado</option>
+            <option value="moderacion">Plantilla: Moderación</option>
+            <option value="niveles">Plantilla: Niveles</option>
+            <option value="economia">Plantilla: Economía</option>
+            <option value="custom">Quiero uno a medida</option>
+          </select>
+          <div id="customNotice" style="display:none; margin-top:10px; background:rgba(255,178,59,0.12); border-left:3px solid var(--warn); border-radius:6px; padding:10px 14px; font-size:0.82rem; color:var(--text-dim);">
+            Los bots a medida tienen un coste único de preparación (15-25€ según complejidad) además de los 5€/mes de alojamiento. Te lo confirmamos antes de cobrarte nada.
+          </div>
+        </div>
+        <div class="field">
+          <label for="details">Cuéntanos algo más (opcional)</label>
+          <textarea id="details" rows="3" placeholder="Ej: quiero que el bot dé la bienvenida con un mensaje personalizado..."></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Empezar — 5€/mes</button>
+        <div class="trust-row">🔒 Pago seguro · cancela cuando quieras</div>
+      </form>
+
+      <div class="success-state" id="successState">
+        <div class="big-dot">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#06241A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>¡Recibido!</h3>
+        <p>Te escribimos a tu correo en breve para tener tu bot listo y online.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand" style="font-size:1.05rem;"><span class="pip"></span>Hangar</div>
+    <div class="fine">Tu bot, siempre despierto.</div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('botType').addEventListener('change', function(){
+    document.getElementById('customNotice').style.display = (this.value === 'custom') ? 'block' : 'none';
+  });
+
+  document.getElementById('signupForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    // En producción: llamada al backend que crea el alta + checkout de pago
+    document.getElementById('signupForm').style.display='none';
+    document.getElementById('successState').style.display='block';
+  });
+</script>
+
+</body>
+</html>
