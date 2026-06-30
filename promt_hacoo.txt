@@ -1,0 +1,59 @@
+Quiero añadir una sección de "catálogo de productos" a mi web existente, 
+inspirada en el formato de agregadores de enlaces de afiliados tipo 
+showroom de productos. Estas son las funcionalidades que necesito:
+
+1. MODELO DE DATOS
+- Producto: nombre, slug (URL amigable), imagen(es), categoría, 
+  plataforma de origen (ej: Hacoo, DHGate, etc.), link de afiliado, 
+  precio (opcional), fecha de añadido, destacado (booleano), 
+  número de vistas/clics.
+- Categoría: nombre, slug, icono/imagen.
+- (Opcional, fase 2) Usuario: nombre, avatar, productos subidos, 
+  puntos/reputación, si quiero sistema de comunidad subiendo productos.
+
+2. PÁGINAS
+- Home: grid de "Productos destacados" y "Productos recientes", 
+  con filtro rápido por categoría arriba.
+- Página de categoría (/categoria/[slug]): listado paginado de 
+  productos de esa categoría.
+- Página de producto individual (/producto/[slug]): imagen grande, 
+  nombre, descripción, botón CTA grande "Ver oferta" que redirige 
+  al link de afiliado (con rel="nofollow sponsored" y abriendo en 
+  nueva pestaña), y registro de clic antes de redirigir.
+- Páginas SEO long-tail estáticas o semi-dinámicas para términos de 
+  búsqueda específicos (ej: "/ofertas-hacoo", "/hacoo-telegram"), 
+  con contenido propio + listado de productos relacionados.
+
+3. DISEÑO
+- Grid responsive de tarjetas de producto (imagen, nombre, 
+  categoría, badge si está "destacado" o "nuevo").
+- Mantén la identidad visual que ya tiene mi web (colores, 
+  tipografía, componentes existentes), no uses un diseño genérico 
+  de e-commerce por defecto.
+- Carga diferida (lazy load) de imágenes para que no penalice 
+  el rendimiento.
+
+4. BACKEND / DATOS
+- [Aquí especifica tu stack: ej. "Usa [base de datos que tengas: 
+  Postgres/Supabase/SQLite]" o "Lee los productos desde un archivo 
+  JSON/CSV que actualizo periódicamente con un scraper externo"]
+- Endpoint o función para registrar clics en cada producto antes 
+  de redirigir al link de afiliado (para poder medir qué productos 
+  convierten mejor).
+
+5. SEO
+- Cada página de producto y categoría debe tener meta title, 
+  meta description y datos estructurados (schema.org Product) 
+  generados dinámicamente a partir de los datos del producto.
+- Sitemap.xml que incluya automáticamente todas las páginas de 
+  producto y categoría.
+
+6. EXTRA
+- Footer con enlace a mi canal de Telegram.
+- Aviso visible en cada ficha de producto: "Este enlace es de 
+  afiliado, puedo recibir una comisión sin coste para ti".
+
+No quiero que el nombre del producto incluya marcas registradas de 
+terceros directamente (usa descripciones por estilo/características 
+en su lugar). Pregúntame si tienes dudas sobre la estructura de 
+carpetas o el stack antes de generar el código.  Y todos los productos basados en las categorías que hemos comentado previamente. 
